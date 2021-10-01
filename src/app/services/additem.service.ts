@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ITEMS } from '../shared/items';
 import { Item, Node } from '../shared/item';
 import { Observable, of } from 'rxjs';
+import { ORIENTATION_BREAKPOINTS } from '@angular/flex-layout';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class AdditemService {
     }
     return of(this.canvas);
   }
-  addItem(item: Item,id:string): Observable<Item[]> {
+  addItem(item: Item, id: string): Observable<Item[]> {
     let node = new Node();
     let exist = {
       up: Boolean(item.orientation[0]),
@@ -55,7 +56,7 @@ export class AdditemService {
         node = this.canvas[+id - 10].startnode;
       }
       this.canvas[+id - 10].startnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //up
     if (
@@ -71,7 +72,7 @@ export class AdditemService {
         node = this.canvas[+id - 1].startnode;
       }
       this.canvas[+id - 1].startnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //right
     if (
@@ -87,11 +88,11 @@ export class AdditemService {
         node = this.canvas[+id + 10].endnode;
       }
       this.canvas[+id + 10].endnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //down
     if (
-      exist.down&&
+      exist.down &&
       aftervertical &&
       this.canvas[+id + 1].id != '' &&
       this.canvas[+id + 1].orientation[0] == '1'
@@ -103,27 +104,27 @@ export class AdditemService {
         node = this.canvas[+id + 1].endnode;
       }
       this.canvas[+id + 1].endnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //upleft
     if (
-      exist.upleft&&
+      exist.upleft &&
       upleft &&
       this.canvas[+id - 1 - 10].id != '' &&
       this.canvas[+id - 1 - 10].orientation[3] == '1'
     ) {
-      if (!this.canvas[+id - 1 - 10].connection ) {
+      if (!this.canvas[+id - 1 - 10].connection) {
         node.value = '' + this.nodes++;
       } else if (this.canvas[+id - 1 - 10].connection) {
         //wire means no new node will be created
         node = this.canvas[+id - 1 - 10].startnode;
       }
       this.canvas[+id - 1 - 10].startnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //upright
     if (
-      exist.upleft&&
+      exist.upleft &&
       upright &&
       this.canvas[+id - 1 + 10].id != '' &&
       this.canvas[+id - 1 + 10].orientation[5] == '1'
@@ -135,10 +136,11 @@ export class AdditemService {
         node = this.canvas[+id - 1 + 10].endnode;
       }
       this.canvas[+id - 1 + 10].endnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //downleft
-    if (exist.downleft&&
+    if (
+      exist.downleft &&
       downleft &&
       this.canvas[+id + 1 - 10].id != '' &&
       this.canvas[+id + 1 - 10].orientation[1] == '1'
@@ -150,11 +152,11 @@ export class AdditemService {
         node = this.canvas[+id + 1 - 10].startnode;
       }
       this.canvas[+id + 1 - 10].startnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     //downright
     if (
-      exist.downright&&
+      exist.downright &&
       downright &&
       this.canvas[+id + 1 + 10].id != '' &&
       this.canvas[+id + 1 + 10].orientation[7] == '1'
@@ -166,7 +168,7 @@ export class AdditemService {
         node = this.canvas[+id + 1 + 10].endnode;
       }
       this.canvas[+id + 1 + 10].endnode = node;
-      item.endnode=node;
+      item.endnode = node;
     }
     console.log(this.nodes);
     return of(this.canvas);
@@ -431,6 +433,27 @@ export class AdditemService {
     item.endnode = node;
     item.connection = true;
     console.log(this.canvas);
+    return of(this.canvas);
+  }
+  rotateItem(item: Item): Observable<Item[]> {
+    let temp=[...(item.orientation)];
+    item.rotate=''+((+item.rotate)+45);
+    for (let i = 0; i < 8; i++) {
+      if(item.orientation[i]=='1') {
+        temp[i]='0'
+        temp[(i+1)%8]='1'
+      }
+    }
+    item.orientation=temp.join('');
+    return of(this.canvas);
+  }
+  deleteItem(item: Item): Observable<Item[]>
+  {
+    for (let i = 0; i < 8; i++) {
+      if(item.orientation[i]=='1') {
+       
+      }
+    }
     return of(this.canvas);
   }
 }
