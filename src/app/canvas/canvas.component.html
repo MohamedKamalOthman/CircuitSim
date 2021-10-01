@@ -1,0 +1,53 @@
+<div fxLayout="row" >
+    <div class="example-container" *ngIf="ITEMS">
+        <h2>Pick an Item</h2>
+    
+        <div
+          id="ITEMS"
+          cdkDropList
+          [cdkDropListData]="ITEMS"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListConnectedTo]="LIST_IDS"
+          >
+          <div class="example-box" *ngFor="let item of ITEMS" cdkDrag>
+              <img
+              src="../assets/images/{{item.id}}.png"
+              alt="{{item}}"
+              class='rotate' style='--angle:{{item.rotate}}deg'>
+          </div>
+        </div>
+      </div>
+    
+      
+
+<div fxLayout="row" class="box" *ngIf="canvas" >
+    <div *ngFor="let item of items1; index as j" class="">
+        <div *ngFor="let item of items2; index as i"  class="">
+            <div
+            id="{{i+j*10+1}}"
+            cdkDropList
+            [cdkDropListData]="canvas"
+            class="col"
+            (cdkDropListDropped)="drop($event)"
+            >
+            <div class="example-box" cdkDrag>
+                
+                <img
+                src="../assets/images/{{canvas[i+j*10+1].id}}.png"
+                alt="{{canvas[i+j*10+1].id}}"
+                class='rotate' style='--angle:{{canvas[i+j*10+1].rotate}}deg'
+                matTooltip="ID:{{i+j*10+1}}
+                Type:{{canvas[i+j*10+1].id}}
+                StartNode:{{canvas[i+j*10+1].startnode.value}}
+                EndNode:{{canvas[i+j*10+1].endnode.value}}"
+                matTooltipClass="example-tooltip-red"
+                (dblclick)="selectItem($event,i+j*10+1)"
+                >
+
+            </div>
+          </div>
+    </div>
+</div>
+</div>
+</div>
