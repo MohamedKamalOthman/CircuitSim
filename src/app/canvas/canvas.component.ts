@@ -73,5 +73,10 @@ export class CanvasComponent implements OnInit {
     this.render.removeClass(event.target,"selected");
     this.selectedId=0;
     }
+
   }
+  rotate()
+    {
+      this.additemservice.rotateItem(this.canvas[this.selectedId]);
+    }
 }

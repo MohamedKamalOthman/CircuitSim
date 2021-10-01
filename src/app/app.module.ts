@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatButtonModule} from '@angular/material/button';
 @NgModule({
   declarations: [AppComponent, CanvasComponent],
   imports: [
@@ -18,6 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DragDropModule,
     FlexLayoutModule,
     MatTooltipModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
