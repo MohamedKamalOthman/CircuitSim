@@ -17,7 +17,7 @@ export class AdditemService {
     return of(this.ITEMS);
   }
   getCanvas(): Observable<Item[]> {
-    for (let i = 1; i <= 12 * 12; i++) {
+    for (let i = 0; i <= 12 * 12; i++) {
       this.canvas.push(new Item());
     }
     return of(this.canvas);
@@ -436,22 +436,186 @@ export class AdditemService {
     return of(this.canvas);
   }
   rotateItem(item: Item): Observable<Item[]> {
-    let temp=[...(item.orientation)];
-    item.rotate=''+((+item.rotate)+45);
+    let temp = [...item.orientation];
+    item.rotate = '' + (+item.rotate + 45);
     for (let i = 0; i < 8; i++) {
-      if(item.orientation[i]=='1') {
-        temp[i]='0'
-        temp[(i+1)%8]='1'
+      if (item.orientation[i] == '1') {
+        temp[i] = '0';
+        temp[(i + 1) % 8] = '1';
       }
     }
-    item.orientation=temp.join('');
+    item.orientation = temp.join('');
     return of(this.canvas);
   }
-  deleteItem(item: Item): Observable<Item[]>
-  {
+  deleteItem(item: Item): Observable<Item[]> {
     for (let i = 0; i < 8; i++) {
-      if(item.orientation[i]=='1') {
-       
+      if (item.orientation[i] == '1') {
+      }
+    }
+    return of(this.canvas);
+  }
+  addNodes(): Observable<Item[]> {
+    this.nodes=0;
+    for (let id = 0; id <= 12 * 12; id++) {
+      console.log(id);
+      if (this.canvas[id].id != '') {
+        let item = this.canvas[id];
+        let node = new Node();
+        node.value='';
+        let exist = {
+          up: Boolean(item.orientation[0]),
+          upright: Boolean(item.orientation[1]),
+          right: Boolean(item.orientation[2]),
+          downright: Boolean(item.orientation[3]),
+          down: Boolean(item.orientation[4]),
+          downleft: Boolean(item.orientation[5]),
+          left: Boolean(item.orientation[6]),
+          upleft: Boolean(item.orientation[7]),
+        };
+        let beforevertical = (+id - 1) % 10 >= 1;
+        let aftervertical = (+id + 1) % 10 <= 6;
+        let beforehorizontal = +id - 10 >= 1;
+        let afterhorizontal = +id + 10 <= 116;
+        let upleft = beforevertical && beforehorizontal;
+        let upright = beforevertical && afterhorizontal;
+        let downleft = aftervertical && beforehorizontal;
+        let downright = aftervertical && afterhorizontal;
+        //left
+        if (
+          exist.left &&
+          beforehorizontal &&
+          this.canvas[+id - 10].id != '' &&
+          this.canvas[+id - 10].orientation[2] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id - 10].startnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id - 10].startnode.value!='') {
+            //node already created
+            node = this.canvas[+id - 10].startnode;
+          }
+          this.canvas[+id - 10].startnode = node;
+          item.endnode = node;
+        }
+        //up
+        if (
+          exist.up &&
+          beforevertical &&
+          this.canvas[+id - 1].id != '' &&
+          this.canvas[+id - 1].orientation[4] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id - 1].startnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id - 1].startnode.value!='') {
+            //node already created
+            node = this.canvas[+id - 1].startnode;
+          }
+          this.canvas[+id - 1].startnode = node;
+          item.endnode = node;
+        }
+        //right
+        if (
+          exist.right &&
+          afterhorizontal &&
+          this.canvas[+id + 10].id != '' &&
+          this.canvas[+id + 10].orientation[6] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id + 10].endnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id + 10].endnode.value!='') {
+            //wire means no new node will be created
+            node = this.canvas[+id + 10].endnode;
+          }
+          this.canvas[+id + 10].endnode = node;
+          item.endnode = node;
+        }
+        //down
+        if (
+          exist.down &&
+          aftervertical &&
+          this.canvas[+id + 1].id != '' &&
+          this.canvas[+id + 1].orientation[0] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id + 1].endnode.value!='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id + 1].endnode.value=='') {
+            //wire means no new node will be created
+            node = this.canvas[+id + 1].endnode;
+          }
+          this.canvas[+id + 1].endnode = node;
+          item.endnode = node;
+        }
+        //upleft
+        if (
+          exist.upleft &&
+          upleft &&
+          this.canvas[+id - 1 - 10].id != '' &&
+          this.canvas[+id - 1 - 10].orientation[3] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id - 1 - 10].startnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id - 1 - 10].startnode.value!='') {
+            //wire means no new node will be created
+            node = this.canvas[+id - 1 - 10].startnode;
+          }
+          this.canvas[+id - 1 - 10].startnode = node;
+          item.endnode = node;
+        }
+        //upright
+        if (
+          exist.upleft &&
+          upright &&
+          this.canvas[+id - 1 + 10].id != '' &&
+          this.canvas[+id - 1 + 10].orientation[5] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id - 1 + 10].endnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id - 1 + 10].endnode.value!='') {
+            //wire means no new node will be created
+            node = this.canvas[+id - 1 + 10].endnode;
+          }
+          this.canvas[+id - 1 + 10].endnode = node;
+          item.endnode = node;
+        }
+        //downleft
+        if (
+          exist.downleft &&
+          downleft &&
+          this.canvas[+id + 1 - 10].id != '' &&
+          this.canvas[+id + 1 - 10].orientation[1] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id + 1 - 10].startnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id + 1 - 10].startnode.value!='') {
+            //wire means no new node will be created
+            node = this.canvas[+id + 1 - 10].startnode;
+          }
+          this.canvas[+id + 1 - 10].startnode = node;
+          item.endnode = node;
+        }
+        //downright
+        if (
+          exist.downright &&
+          downright &&
+          this.canvas[+id + 1 + 10].id != '' &&
+          this.canvas[+id + 1 + 10].orientation[7] == '1'&&
+          node.value!=''
+        ) {
+          if (this.canvas[+id + 1 + 10].endnode.value=='') {
+            node.value = '' + this.nodes++;
+          } else if (this.canvas[+id + 1 + 10].endnode.value=='') {
+            //wire means no new node will be created
+            node = this.canvas[+id + 1 + 10].endnode;
+          }
+          this.canvas[+id + 1 + 10].endnode = node;
+          item.endnode = node;
+        }
       }
     }
     return of(this.canvas);
